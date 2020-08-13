@@ -73,6 +73,7 @@ Error types :
   - Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. 
   - Sample: 
       -Request:  `curl http://127.0.0.1:5000/categories`
+
       -Response:
 
           {'1' : "Science",
@@ -88,7 +89,9 @@ Error types :
 
   - Sample: 
       -Request: `curl http://127.0.0.1:5000/questions`
+
       -Response: 
+      
         {"categories": {
           "1": "Science", 
           "2": "Art", 
