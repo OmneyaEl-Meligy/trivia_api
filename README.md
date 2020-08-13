@@ -72,7 +72,7 @@ Error types :
   - Request Arguments: None
   - Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. 
   - Sample: 
-      -Request:  `curl http://127.0.0.1:5000/categories`
+      - Request:  `curl http://127.0.0.1:5000/categories`
 
       -Response:
 
@@ -88,10 +88,11 @@ Error types :
   - Questions are paginated in groups of 10 and ordered in descending order. Include a request argument to choose page number, starting from 1. 
 
   - Sample: 
-      -Request: `curl http://127.0.0.1:5000/questions`
 
-      -Response: 
-      
+      - Request: `curl http://127.0.0.1:5000/questions`
+
+      - Response: 
+
         {"categories": {
           "1": "Science", 
           "2": "Art", 
@@ -182,9 +183,12 @@ Error types :
   - Deletes a question using a question ID. if it exists. - Returns a list of questions after delete, number of total questions, current category, categories
   - Questions are paginated in groups of 10 and ordered in descending order. Include a request argument to choose page number, starting from 1. 
   - Sample: 
-      -Request:
+
+      - Request:
         `curl -X DELETE http://127.0.0.1:5000/questions/16?page=2`
-      -Response:
+
+      - Response:
+
           {
             "categories": {
               "1": "Science",
@@ -262,8 +266,9 @@ Error types :
         (question [string] ,  answer [string], category [int], difficulty score [int])
   - Returns success only.
   - Sample: 
-      -Request:
+      - Request:
         `curl http://127.0.0.1:5000/questions -X POST -H "Content-Type: application/json" -d '{"question":"testing question?","answer":"yes","difficulty":1,"category":1}'`
+
       -Response:
         {
           "success": true
@@ -275,9 +280,11 @@ Error types :
         (searchTerm [string])
   - Returns alist of questions related to ther search term and paginated in groups of 10 and ordered in descending order. Include a request argument to choose page number, starting from 1. 
   - Sample: 
-      -Request:
+      - Request:
           `curl http://127.0.0.1:5000/questions -X POST -H "Content-Type: application/json" -d '{"searchTerm":"dung"}'`
-      -Response:
+
+      - Response:
+
           {
             "categories": {
               "1": "Science", 
@@ -307,9 +314,11 @@ Error types :
   - Request Arguments: category_id [int]
   - Returns alist of questions related to the selected category and paginated in groups of 10 and ordered in descending order. Include a request argument to choose page number, starting from 1. 
   - Sample: 
-      -Request:
+      - Request:
         `curl http://127.0.0.1:5000/categories/1/questions`
-      -Response:
+
+      - Response:
+
           {
           "categories": {
             "1": "Science", 
@@ -355,9 +364,11 @@ Error types :
         -previous_questions  [array] : list of previously asked questions in the quiz
   - Returns an object of randomly selected question 
   - Sample: 
-      -Request:
+      - Request:
           `curl http://127.0.0.1:5000/quizzes -X POST -H "Content-Type: application/json" -d '{"previous_questions":[],"quiz_category":{"type":"Science","id":"1"}}'`
-      -Response:
+
+      - Response:
+      
         {
           "question": {
             "answer": "my answer", 
