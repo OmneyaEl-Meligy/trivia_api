@@ -48,7 +48,7 @@ class QuizView extends Component {
   getNextQuestion = () => {
     const previousQuestions = [...this.state.previousQuestions]
     if(this.state.currentQuestion.id) { previousQuestions.push(this.state.currentQuestion.id) }
-console.log(previousQuestions)
+    // console.log(previousQuestions)
     $.ajax({
       url: 'http://127.0.0.1:5000/quizzes', //TODO: update request URL
       type: "POST",
@@ -136,9 +136,7 @@ console.log(previousQuestions)
 
   evaluateAnswer = () => {
     const formatGuess = this.state.guess.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").toLowerCase()
-    console.log(formatGuess)
-    const answerArray = this.state.currentQuestion.answer.toLowerCase().split(' ');
-    console.log(answerArray.includes(formatGuess))
+    const answerArray = this.state.currentQuestion.answer.toLowerCase().split(' ');    
     return answerArray.includes(formatGuess)
   }
 

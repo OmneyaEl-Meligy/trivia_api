@@ -27,14 +27,14 @@ def create_app(test_config=None):
   
   
   def paginated_questions(page,questions):
-
-    # if page > (len(questions)/QUESTIONS_PER_PAGE):
-    #   abort(404)
-
+    
     start = (page-1) *QUESTIONS_PER_PAGE
     end = start + QUESTIONS_PER_PAGE
     formated_questions = [question.format() for question in questions]
-    return  formated_questions[start : end]
+    questions_on_page = formated_questions[start : end]
+    if len(questions) and len(questions_on_page) == 0:
+      abort(404)
+    return questions_on_page
 
   def get_categories_list():
     categories = Category.query.all()
@@ -43,24 +43,11 @@ def create_app(test_config=None):
       categories_array[cat.id]=cat.type
     return categories_array
 
-  #test Route
-  # @app.route('/')
-  # def index():
-  #   return jsonify({
-  #     'success' : True,
-  #     'message' : 'HELLOOOO'
-  #   })
-
-
   #endpoint retrieve all available categories.
   @app.route('/categories')
   def retrieve_categories():
     categories = Category.query.all()
     formated_categories = get_categories_list()
-    #[category.format() for category in categories]
-
-    if len(categories) == 0:
-        abort(404)
 
     return jsonify({
         'success': True,
@@ -124,13 +111,26 @@ def create_app(test_config=None):
  # Search by Search Term
   @app.route('/questions', methods=['POST'])
   def create_question():
-   
-    body = request.get_json()
-    question = body.get('question', None)
-    answer = body.get('answer', None)
-    difficulty = body.get('difficulty', None)
-    category = body.get('category', None)
-    searchTerm = body.get('searchTerm', None)
+    if request!= None:
+      body = request.get_json()
+    else:
+      abort(400)
+    if body!= None:
+     
+      if (body.get('question')!=None and body.get('answer')!=None \
+         and body.get('difficulty')!=None and body.get('category')!=None)  \
+        or (body.get('searchTerm')!=None) : 
+        question = body.get('question', None)
+        answer = body.get('answer', None)
+        difficulty = body.get('difficulty', None)
+        category = body.get('category', None)
+        searchTerm = body.get('searchTerm', None)
+      else: 
+        abort(400)
+    else:
+      abort(400)
+
+
     page = request.args.get('page',1, type=int)
     
     try:
@@ -189,21 +189,33 @@ def create_app(test_config=None):
       })
 
 
- 
   #endpoint to get random questions to play the quiz
   @app.route('/quizzes', methods=['POST'])
   def select_random_question():
     
-    body = request.get_json()
-    previous_questions = body.get('previous_questions', {})
-    quiz_category = body.get('quiz_category', None)
-    category_id = quiz_category.get('id')
+    if request!= None:
+      body = request.get_json()
+    else: abort(400)
+      
+    if body!= None:
+      if body.get('previous_questions')!=None and body.get('quiz_category')!=None :
+        previous_questions = body.get('previous_questions', {})
+        quiz_category = body.get('quiz_category', None)
+        try:
+          if quiz_category.get('id') != None:
+            category_id = quiz_category.get('id')
+          else: abort(400)
+        except:abort(400)
+      else:abort(400)
+    else:abort(400)
 
     try:   
       query =  Question.query.filter(~Question.id.in_(previous_questions))              
       if category_id !=0 :
         query = query.filter(Question.category == category_id)  
-        total_cat_questions = Question.query.filter(Question.category == category_id).count()      
+        total_cat_questions = Question.query.filter(Question.category == category_id).count()
+      else:
+        total_cat_questions = Question.query.count()
     
       selected_question = query.order_by(func.random()).first()
       
@@ -221,7 +233,15 @@ def create_app(test_config=None):
      
         
  #error handlers for all expected errors 
- 
+
+  @app.errorhandler(400)
+  def not_found(error):
+    return jsonify({
+      "success": False, 
+      "error": 400,
+      "message": "bad request"
+      }), 400
+
   @app.errorhandler(404)
   def not_found(error):
     return jsonify({

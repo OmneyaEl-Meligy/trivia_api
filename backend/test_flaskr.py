@@ -61,13 +61,13 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(len(data['questions']))
         self.assertTrue(data['categories'])
 
-    # def test_404_get_questions_not_valid_page(self):
-    #     res = self.client().get('/questions?page=1000')
-    #     data = json.loads(res.data)
+    def test_404_get_questions_not_valid_page(self):
+        res = self.client().get('/questions?page=1000')
+        data = json.loads(res.data)
 
-    #     self.assertEqual(res.status_code, 404)
-    #     self.assertEqual(data['success'], False)
-    #     self.assertEqual(data['message'], 'resource not found')
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'resource not found')
 
 
    # endpoint to DELETE question using a question ID
@@ -85,6 +85,20 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['categories'])
         self.assertEqual(question, None)
 
+    def test_error_405_delete_question_without_id(self):
+        res = self.client().delete('/questions')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 405)
+        self.assertEqual(data['message'], "method not allowed for this request")
+
+    def test_error_422_delete_question_wrong_id(self):
+        res = self.client().delete('/questions/1000')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['message'], "unprocessable")
+
 
   #endpoint to POST a new question
     def test_create_new_question(self):
@@ -99,6 +113,37 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
+
+    def test_error_400_create_new_question_no_body(self):      
+        res = self.client().post('/questions')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 400 )
+        self.assertEqual(data['message'], "bad request")
+
+    def test_error_400_create_new_question_missing_body(self):      
+        new_question = {
+            "question" : "testing question?",
+            "answer" : "yes"            
+        }
+        res = self.client().post('/questions', json=new_question)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 400 )
+        self.assertEqual(data['message'], "bad request")
+
+    def test_error_422_create_new_question_wrong_input(self):      
+        new_question = {
+            "question" : "testing question?",
+            "answer" : "yes",
+            "difficulty" : "dif" , 
+            "category" : "Science"       
+        }
+        res = self.client().post('/questions', json=new_question)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 422 )
+        self.assertEqual(data['message'], "unprocessable")
 
 
     #endpoint to get questions based on a search term
@@ -123,6 +168,14 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['total_questions'],0)
         self.assertTrue(data['categories'])
         self.assertEqual(len(data['questions']), 0)
+    
+    def test_error_search_questions_with_wrong_body(self):
+        res = self.client().post('/questions', json={'search': '00000'})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 400 )
+        self.assertEqual(data['message'], "bad request")
+
 
    #endpoint to get questions based on category
     def test_search_paginated_questions_by_category(self):
@@ -136,6 +189,15 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(len(data['questions']))
         self.assertTrue(data['categories'])
 
+    def test__error_404_search_questions_undefined_category(self):
+        res = self.client().get('categories/10/questions')
+        data = json.loads(res.data)
+        
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False),
+        self.assertEqual(data['message'], "resource not found")
+        
+
    #endpoint to get random questions to play the quiz
     def test_find_random_questions_for_quiz(self):
         res = self.client().post('/quizzes', json= {"previous_questions":[],
@@ -147,6 +209,31 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertTrue(data['question'])
         self.assertTrue(data['total_cat_questions'])
+
+    def test_error_400_find_random_questions_for_quiz_empty_body(self):
+        res = self.client().post('/quizzes')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 400 )
+        self.assertEqual(data['message'], "bad request")
+
+    def test_error_400_find_random_questions_for_quiz_wrong_body(self):
+        res = self.client().post('/quizzes', json= {"previous":[],
+                                                      "category" :  { "type": "Science", "id": "1" }
+                                                      })
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 400 )
+        self.assertEqual(data['message'], "bad request")
+
+    def test_error_400_find_random_questions_for_quiz_wrong_input(self):
+        res = self.client().post('/quizzes', json= {"previous":[],
+                                                      "category" : "Science"
+                                                      })
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 400 )
+        self.assertEqual(data['message'], "bad request")
         
 
     
