@@ -70,12 +70,13 @@ class QuizView extends Component {
           guess: '',
           forceEnd: result.question ? false : true          
         })        
-        questionsPerPlay = result.total_cat_questions > questionsPerPlay ? result.total_cat_questions : questionsPerPlay
-     
+        console.log(questionsPerPlay,result.total_cat_questions)
+        questionsPerPlay = result.total_cat_questions < questionsPerPlay ? result.total_cat_questions : questionsPerPlay
+        console.log(questionsPerPlay)
         return;
       },
       error: (error) => {
-        alert('Unable to load question. Please try your request again xx')
+        alert('Unable to load question. Please try your request again')
         return;
       }
     })
