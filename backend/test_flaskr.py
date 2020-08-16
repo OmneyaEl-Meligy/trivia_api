@@ -83,6 +83,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['total_questions'])
         self.assertTrue(len(data['questions']))
         self.assertTrue(data['categories'])
+        self.assertTrue(data['deleted_question'])
         self.assertEqual(question, None)
 
     def test_error_405_delete_question_without_id(self):

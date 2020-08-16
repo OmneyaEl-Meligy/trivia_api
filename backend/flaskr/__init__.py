@@ -100,6 +100,7 @@ def create_app(test_config=None):
         'questions' : formated_questions,
         'total_questions' : len(questions),
         'categories' : categories_array, 
+        'deleted_question' : question_id,
         'current_category' : None 
       })
 

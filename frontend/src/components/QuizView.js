@@ -3,6 +3,7 @@ import $ from 'jquery';
 
 import '../stylesheets/QuizView.css';
 
+const noOfQuizQuestions = 5;
 var questionsPerPlay = 5; 
 
 class QuizView extends Component {
@@ -70,9 +71,7 @@ class QuizView extends Component {
           guess: '',
           forceEnd: result.question ? false : true          
         })        
-        console.log(questionsPerPlay,result.total_cat_questions)
-        questionsPerPlay = result.total_cat_questions < questionsPerPlay ? result.total_cat_questions : questionsPerPlay
-        console.log(questionsPerPlay)
+        questionsPerPlay = result.total_cat_questions < noOfQuizQuestions ? result.total_cat_questions : noOfQuizQuestions
         return;
       },
       error: (error) => {
